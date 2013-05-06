@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 project(GPSivan)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/vc/lib)
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /opt/vc/include)
+
 
 find_package(GPSD REQUIRED)
 find_package(PNG REQUIRED)
