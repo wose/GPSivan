@@ -1,4 +1,5 @@
 set(SRC
+        gps_com.cpp
         main.cpp
 )
 add_executable(gpsivan ${SRC})

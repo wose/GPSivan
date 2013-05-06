@@ -1,46 +1,38 @@
 #include <iostream>
+#include <cstdio>
 #include <unistd.h>
+#include <thread>
 
-#include "libgpsmm.h"
-
-using namespace std;
+#include "gps_com.h"
 
 #define WAITING_TIME 5000000
 #define RETRY_TIME 5
 #define ONE_SECOND 1000000
 
+
+gps_com gps;
+
+void update_gps();
+
 int main(void)
 {
-  for(;;){
-    //For version 3.7
-    gpsmm gps_rec("localhost", DEFAULT_GPSD_PORT);
-    
-    if (gps_rec.stream(WATCH_ENABLE|WATCH_NMEA) == NULL) {
-      cout << "No GPSD running. Retry to connect in " << RETRY_TIME << " seconds." << endl;
-      usleep(RETRY_TIME * ONE_SECOND);
-      continue;    // It will try to connect to gpsd again
-    }
+  
+  std::thread gps_thread(update_gps);
 
-    const char* buffer = NULL;
-    
-    for (;;) {
-      struct gps_data_t* newdata;
-      
-      if (!gps_rec.waiting(WAITING_TIME))
-        continue;
-      
-      if ((newdata = gps_rec.read()) == NULL) {
-        cerr << "Read error.\n";
-        break;
-      } else {
-        buffer = gps_rec.data();
-        
-        // We print the NMEA sentences!
-        cout << "***********" << endl;
-        cout << buffer << endl;            
-        
-        //usleep(1000000);
-      }
+  while(getchar() != 'q')
+    {
+      double lat, lon;
+      if(gps.get_latlon(lat, lon))
+        std::cout << "Lat: " << lat << " Lon: " << lon << std::endl;
     }
-  }
+  
+  gps.stop();
+  gps_thread.join();
+
+  return 0;
+}
+
+void update_gps()
+{
+  gps.update();
 }
