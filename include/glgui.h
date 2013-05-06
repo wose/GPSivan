@@ -39,8 +39,8 @@ class glgui
   EGLSurface _egl_surface;
   EGLNativeWindowType _win;
 
-  int _display_width;
-  int _display_height;
+  unsigned int _display_width;
+  unsigned int _display_height;
 
   enum shaderLocationType {
     shaderAttrib,
