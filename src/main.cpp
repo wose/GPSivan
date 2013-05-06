@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "gps_com.h"
+#include "glgui.h"
 
 #define WAITING_TIME 5000000
 #define RETRY_TIME 5
@@ -11,13 +12,16 @@
 
 
 gps_com gps;
+glgui gui;
 
 void update_gps();
+void update_gui();
 
 int main(void)
 {
   
   std::thread gps_thread(update_gps);
+  std::thread gui_thread(update_gui);
 
   while(getchar() != 'q')
     {
@@ -27,7 +31,10 @@ int main(void)
     }
   
   gps.stop();
+  gui.stop();
+
   gps_thread.join();
+  gui_thread.join();
 
   return 0;
 }
@@ -35,4 +42,9 @@ int main(void)
 void update_gps()
 {
   gps.update();
+}
+
+void update_gui()
+{
+  gui.update();
 }
