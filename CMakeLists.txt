@@ -3,7 +3,10 @@ project(GPSivan)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/vc/lib)
-set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /opt/vc/include)
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
+                       /opt/vc/include
+                       /opt/vc/include/interface/vcos/pthreads
+                       /opt/vc/include/interface/vmcs_host/linux)
 
 
 find_package(GPSD REQUIRED)
