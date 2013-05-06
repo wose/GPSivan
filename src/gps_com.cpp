@@ -1,3 +1,4 @@
+#include <iostream>
 #include <unistd.h>
 
 #include "gps_com.h"
@@ -18,6 +19,7 @@ void gps_com::update()
     {
       if(_gpsd_con.stream(WATCH_ENABLE|WATCH_NMEA) == NULL)
         {
+          std::cout << "No gpsd running?" << std::endl;
           usleep(_retry_time * _one_second);
           continue;
         }
@@ -25,14 +27,19 @@ void gps_com::update()
         {
           gps_data_t* new_data;
           if(!_gpsd_con.waiting(_waiting_time))
-            continue;
+            {
+              std::cout << "No data" << std::endl;
+              continue;
+            }
 
           if((new_data = _gpsd_con.read()) == NULL)
             {
+              std::cout << "read error" << std::endl;
               continue;
             }
           else
             {
+              std::cout << "got data" << std::endl;
               std::lock_guard<std::mutex> lock(_gps_data_mutex);
               _last_data = *new_data;
             }
