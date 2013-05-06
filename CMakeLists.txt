@@ -3,11 +3,7 @@ project(GPSivan)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /opt/vc/lib)
-set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
-                       /opt/vc/include
-                       /opt/vc/include/interface/vcos/pthreads
-                       /opt/vc/include/interface/vmcs_host/linux)
-
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} /opt/vc/include)
 
 find_package(GPSD REQUIRED)
 find_package(PNG REQUIRED)
@@ -15,6 +11,9 @@ find_package(EGL REQUIRED)
 find_package(GLES REQUIRED)
 find_package(KAZMATH REQUIRED)
 
+include_directories(
+        /opt/vc/include/interface/vcos/pthreads
+       /opt/vc/include/interface/vmcs_host/linux)
 include_directories(${GPSD_INCLUDE_DIR})
 include_directories(${ONG_INCLUDE_DIR})
 include_directories(${EGL_INCLUDE_DIR})
