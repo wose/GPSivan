@@ -41,6 +41,8 @@ void gps_com::update()
             {
               std::cout << "got data" << std::endl;
               std::lock_guard<std::mutex> lock(_gps_data_mutex);
+              if(new_data->set & LATLON_SET)
+                std::cout << "latlon is set" << std::endl;
               _last_data = *new_data;
             }
         }
