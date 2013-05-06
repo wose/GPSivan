@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <bcm_host.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <png.h>
@@ -67,7 +68,7 @@ void glgui::make_native_window()
 
   nativewindow.element = dispman_element;
   nativewindow.width = _display_width;
-  nativewindow.height =__display_height;
+  nativewindow.height =_display_height;
   vc_dispmanx_update_submit_sync(dispman_update);
 
   _win = &nativewindow;
