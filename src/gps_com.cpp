@@ -17,7 +17,7 @@ void gps_com::update()
 {
   while(_run)
     {
-      if(_gpsd_con.stream(WATCH_ENABLE|WATCH_NMEA) == NULL)
+      if(_gpsd_con.stream(WATCH_ENABLE|WATCH_JSON) == NULL)
         {
           std::cout << "No gpsd running?" << std::endl;
           usleep(_retry_time * _one_second);
