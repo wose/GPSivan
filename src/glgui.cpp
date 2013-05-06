@@ -64,7 +64,7 @@ void glgui::make_native_window()
                             0 /*layer */ , &dst_rect, 0 /*src */ ,
                             &src_rect, DISPMANX_PROTECTION_NONE,
                             &alpha /*alpha */ , 0 /*clamp */ ,
-                            0 /*transform */ );
+                            (DISPMANX_TRANSFORM_T)0 /*transform */ );
 
   nativewindow.element = dispman_element;
   nativewindow.width = _display_width;
