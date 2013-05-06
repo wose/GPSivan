@@ -63,5 +63,7 @@ bool gps_com::get_latlon(double &lat, double &lon)
       lon= _last_data.fix.longitude;
       return true;
     }
+  else
+    std::cout << _last_data.fix.mode << " " << _last_data.fix.latitude << std::endl;
   return false;
 }
