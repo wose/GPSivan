@@ -19,8 +19,8 @@ void update_gui();
 
 int main(void)
 {
-  if(!gui.init())
-      return -1;
+  //  if(!gui.init())
+  //    return -1;
 
   std::thread gps_thread(update_gps);
   std::thread gui_thread(update_gui);

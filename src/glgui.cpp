@@ -518,6 +518,7 @@ void glgui::stop()
 
 void glgui::update()
 {
+  init();
   unsigned long frame_counter = 0;
   glActiveTexture(GL_TEXTURE0);
 
