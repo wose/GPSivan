@@ -522,8 +522,8 @@ void glgui::update()
   glActiveTexture(GL_TEXTURE0);
 
   glViewport(0, 0, _display_width, _display_height);
-  font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
   init_glprint(_display_width, _display_height);
+  font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
 
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
