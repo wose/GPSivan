@@ -403,6 +403,7 @@ GLuint glgui::create_shader(const char *filename, GLenum type)
   GLuint res = glCreateShader(type);
   const GLchar *sources[] = {
     // Define GLSL version
+#define GL_ES_VERSION_2_0
 #ifdef GL_ES_VERSION_2_0
     "#version 100\n"
 #else
