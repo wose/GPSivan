@@ -1,10 +1,13 @@
+#include <cstdio>
 #include <cstdlib>
+#include <cstdarg>
+#include <unistd.h>
+
 #include <bcm_host.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 #include <png.h>
 #include <kazmath/kazmath.h>
-
 
 #include "glgui.h"
 
@@ -14,14 +17,98 @@ glgui::glgui()
 
 glgui::~glgui()
 {
+  eglDestroyContext(_egl_display, _egl_context);
+  eglDestroySurface(_egl_display, _egl_surface);
+  eglTerminate(_egl_display);
 }
 
 void glgui::init_glprint(int width, int height)
 {
+  kmMat4OrthographicProjection(&_glp.opm, 0, w, h, 0, -10, 10);
+
+  GLuint vs, fs;
+  vs = create_shader("resources/shaders/glprint.vert", GL_VERTEX_SHADER);
+  fs = create_shader("resources/shaders/glprint.frag", GL_FRAGMENT_SHADER);
+
+  _glp.printProg = glCreateProgram();
+  glAttachShader(_glp.printProg, vs);
+  glAttachShader(_glp.printProg, fs);
+  glLinkProgram(_glp.printProg);
+  int link_ok;
+  glGetProgramiv(_glp.printProg, GL_LINK_STATUS, &link_ok);
+  if (!link_ok) {
+    printf("glLinkProgram:");
+    //  print_log(__glp.printProg);
+    printf("\n");
+  }
+
+  _glp.cx_uniform = getShaderLocation(shaderUniform, _glp.printProg, "cx");
+  _glp.cy_uniform = getShaderLocation(shaderUniform, _glp.printProg, "cy");
+  _glp.opm_uniform =
+    getShaderLocation(shaderUniform, _glp.printProg, "opm_uniform");
+  _glp.texture_uniform =
+    getShaderLocation(shaderUniform, _glp.printProg, "texture_uniform");
+
+  _glp.vert_attrib = getShaderLocation(shaderAttrib, _glp.printProg, "vert_attrib");
+  _glp.uv_attrib = getShaderLocation(shaderAttrib, _glp.printProg, "uv_attrib");
 }
 
 void glgui::glPrintf(float x, float y, font_t &fnt, const char *fmt, ...)
 {
+  char text[256];
+  va_list ap;
+  va_start(ap, fmt);
+  vsprintf(text, fmt, ap);
+  va_end(ap);
+
+  glUseProgram(_glp.printProg);
+  kmMat4Assign(&_glp.otm, &_glp.opm);
+  kmMat4Translation(&_glp.t, x, y, -1);
+  kmMat4Multiply(&_glp.otm, &_glp.otm, &_glp.t);
+
+  glEnable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+
+    //glBindTexture(GL_TEXTURE_2D, __glp.fonttex);
+  glBindTexture(GL_TEXTURE_2D, fnt.tex);
+
+  glEnableVertexAttribArray(_glp.vert_attrib);
+// glBindBuffer(GL_ARRAY_BUFFER, __glp.quadvbo);
+  glBindBuffer(GL_ARRAY_BUFFER, fnt.vertBuf);
+  glVertexAttribPointer(_glp.vert_attrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glEnableVertexAttribArray(_glp.uv_attrib);
+// glBindBuffer(GL_ARRAY_BUFFER, __glp.texvbo);
+  glBindBuffer(GL_ARRAY_BUFFER, fnt.texBuf);
+  glVertexAttribPointer(_glp.uv_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glUniform1i(_glp.texture_uniform, 0);
+
+  for (int n = 0; n < strlen(text); n++) {
+    int c = (int)text[n] - fnt.base;
+// float cx = c % 16;
+// float cy = (int)(c / 16.0);
+// cy = cy * (1. / 16);
+// cx = cx * (1. / 16);
+    float cx = c % 16;
+    float cy = (int)(c/16.0);
+    cy = cy * (1. / (fnt.tLines));
+    cx = cx * (1. / 16);
+
+    glUniformMatrix4fv(_glp.opm_uniform, 1, GL_FALSE, (GLfloat *) & _glp.otm);
+    glUniform1f(_glp.cx_uniform, cx);
+    glUniform1f(_glp.cy_uniform, cy);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    kmMat4Translation(&_glp.t, fnt.fWidth, 0, 0);
+    kmMat4Multiply(&_glp.otm, &_glp.otm, &_glp.t);
+  }
+
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glDisableVertexAttribArray(_glp.uv_attrib);
+  glDisableVertexAttribArray(_glp.vert_attrib);
 }
 
 void glgui::make_native_window()
@@ -81,6 +168,39 @@ void glgui::make_native_window()
 
 font_t glgui::create_font(const char* tpath, unsigned int cbase, float txt_height, float txt_lines, int fnt_width, int fnt_height)
 {
+  font_t t;
+
+  t.tex = loadPNG(tpath);
+  t.base=cbase;
+  t.tHeight=txt_height;
+  t.tLines=txt_lines;
+  t.fWidth=fnt_width;
+  t.fHeight=fnt_height;
+
+  float *vb=malloc(sizeof(float) * 3 * 6);
+    
+  vb[0]=vb[1]=vb[2]=vb[5]=vb[7]=vb[8]=vb[11]=vb[12]=vb[14]=vb[15]=vb[17]=0;
+  vb[3]=vb[6]=vb[9]=fWidth;
+  vb[4]=vb[10]=vb[16]=fHeight;
+
+  glGenBuffers(1, &t.vertBuf);
+  glBindBuffer(GL_ARRAY_BUFFER, t.vertBuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6, vb, GL_STATIC_DRAW);
+
+  free(vb);
+
+  float *tc=malloc(sizeof(float) * 2 * 6);
+  tc[0]=tc[1]=tc[5]=tc[8]=tc[9]=tc[10]=0;
+  tc[2]=tc[4]=tc[6]=1./16;
+  tc[3]=tc[7]=tc[11]=1./txt_lines;
+
+  glGenBuffers(1, &t.texBuf);
+  glBindBuffer(GL_ARRAY_BUFFER, t.texBuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6, tc, GL_STATIC_DRAW);
+
+  free(tc);
+
+  return t;
 }
 
 int glgui::loadpng(const char* filename)
@@ -209,6 +329,84 @@ int glgui::loadpng(const char* filename)
   return texture;
 }
 
+char* glgui::file_read(const char *filename)
+{
+  FILE *in = fopen(filename, "rb");
+  if (in == NULL)
+    return NULL;
+
+  int res_size = BUFSIZ;
+  char *res = (char *)malloc(res_size);
+  int nb_read_total = 0;
+
+  while (!feof(in) && !ferror(in)) {
+    if (nb_read_total + BUFSIZ > res_size) {
+      if (res_size > 10 * 1024 * 1024)
+        break;
+      res_size = res_size * 2;
+      res = (char *)realloc(res, res_size);
+    }
+    char *p_res = res + nb_read_total;
+    nb_read_total += fread(p_res, 1, BUFSIZ, in);
+  }
+
+  fclose(in);
+  res = (char *)realloc(res, nb_read_total + 1);
+  res[nb_read_total] = '\0';
+  return res;
+}
+
+GLuint glgui::create_shader(const char *filename, GLenum type)
+{
+  const GLchar *source = file_read(filename);
+  if (source == NULL) {
+    fprintf(stderr, "Error opening %s: ", filename);
+    perror("");
+    return 0;
+  }
+  GLuint res = glCreateShader(type);
+  const GLchar *sources[] = {
+    // Define GLSL version
+#ifdef GL_ES_VERSION_2_0
+    "#version 100\n"
+#else
+    "#version 120\n"
+#endif
+        ,
+    // GLES2 precision specifiers
+#ifdef GL_ES_VERSION_2_0
+    // Define default float precision for fragment shaders:
+    (type == GL_FRAGMENT_SHADER) ?
+    "#ifdef GL_FRAGMENT_PRECISION_HIGH\n"
+    "precision highp float; \n"
+    "#else \n"
+    "precision mediump float; \n"
+    "#endif \n" : ""
+    // Note: OpenGL ES automatically defines this:
+    // #define GL_ES
+#else
+    // Ignore GLES 2 precision specifiers:
+    "#define lowp \n" "#define mediump\n" "#define highp \n"
+#endif
+    ,
+    source
+  };
+  glShaderSource(res, 3, sources, NULL);
+  free((void *)source);
+
+  glCompileShader(res);
+  GLint compile_ok = GL_FALSE;
+  glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
+  if (compile_ok == GL_FALSE) {
+    fprintf(stderr, "%s:", filename);
+    //    print_log(res);
+    glDeleteShader(res);
+    return 0;
+  }
+
+  return res;
+}
+
 void glgui::draw_tile(float x, float y, float w, float h, float a, int tex)
 {
 }
@@ -218,8 +416,65 @@ void glgui::swap_buffers()
   eglSwapBuffers(_egl_display, _egl_surface);
 }
 
-void glgui::init()
+bool glgui::init()
 {
+  makeNativeWindow(); // sets global pointers for win and disp
+
+  EGLint majorVersion;
+  EGLint minorVersion;
+
+  // most egl you can sends NULLS for maj/min but not RPi
+  if (!eglInitialize(_egl_display, &majorVersion, &minorVersion)) {
+    printf("Unable to initialize EGL\n");
+    return false;
+  }
+
+  EGLint attr[] = { // some attributes to set up our egl-interface
+    EGL_BUFFER_SIZE, 16,
+    EGL_DEPTH_SIZE, 16,
+    EGL_RENDERABLE_TYPE,
+    EGL_OPENGL_ES2_BIT,
+    EGL_NONE
+  };
+
+  EGLConfig ecfg;
+  EGLint num_config;
+  if (!eglChooseConfig(_egl_display, attr, &ecfg, 1, &num_config)) {
+    //cerr << "Failed to choose config (eglError: " << eglGetError() << ")" << endl;
+    printf("failed to choose config eglerror:%i\n", eglGetError()); // todo change error number to text error
+    return false;
+  }
+
+  if (num_config != 1) {
+    printf("Didn't get exactly one config, but %i\n", num_config);
+    return false;
+  }
+
+  _egl_surface = eglCreateWindowSurface(_egl_display, ecfg, _win, NULL);
+
+  if (_egl_surface == EGL_NO_SURFACE) {
+    //cerr << "Unable to create EGL surface (eglError: " << eglGetError() << ")" << endl;
+    printf("failed create egl surface eglerror:%i\n",
+           eglGetError());
+    return false;
+  }
+  //// egl-contexts collect all state descriptions needed required for operation
+  EGLint ctxattr[] = {
+    EGL_CONTEXT_CLIENT_VERSION, 2,
+    EGL_NONE
+  };
+  _egl_context =
+    eglCreateContext(_egl_display, ecfg, EGL_NO_CONTEXT, ctxattr);
+  if (_egl_context == EGL_NO_CONTEXT) {
+    //cerr << "Unable to create EGL context (eglError: " << eglGetError() << ")" << endl;
+    printf("unable to create EGL context eglerror:%i\n",
+           eglGetError());
+    return false;
+  }
+  //// associate the egl-context with the egl-surface
+  eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, _egl_context);
+
+  return true
 }
 
 void glgui::stop()
@@ -229,8 +484,26 @@ void glgui::stop()
 
 void glgui::update()
 {
+  unsigned long frame_counter = 0;
+  glActiveTexture(GL_TEXTURE0);
+
+  glViewport(0, 0, _display_width, _display_height);
+  font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
+  init_glprint(_display_width, _display_height);
+
+  glCullFace(GL_BLACK);
+  glEnable(GL_CULL_FACE);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+  glClearColor(0.2, 0.2, 0.2, 1);
+
   while(_run)
     {
-      
+      ++frame_counter;
+      glClear(GL_COLOR_BUFFER_BIT | GLDEPTH_BUFFER_BIT);
+      glPrintf(0, 0, basic_font, "frame=%i", frame_counter);
+      swap_buffers();
+      usleep(16000);
     }
 }

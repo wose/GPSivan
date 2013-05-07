@@ -47,6 +47,15 @@ class glgui
     shaderUniform
   };
 
+
+  struct {
+    kmMat4 opm, otm, t;
+    GLuint printProg, opm_uniform;
+    GLuint fonttex, texture_uniform, cx_uniform, cy_uniform;
+    GLuint vert_attrib, uv_attrib;
+    GLuint quadvbo, texvbo;
+  } _glp;
+
  private:
   void init_glprint(int width, int height);
   void glPrintf(float x, float y, font_t &fnt, const char *fmt, ...);
@@ -55,11 +64,13 @@ class glgui
   void draw_tile(float x, float y, float w, float h, float a, int tex);
   void swap_buffers();
   void make_native_window();
+  char *file_read(const char *filename);
+  GLuint create_shader(const char *filename, GLenum type);
 
  public:
   int get_display_width() { return _display_width; }
   int get_display_height() { return _display_height; }
-  void init();
+  bool init();
   void update();
   void stop();
 };
