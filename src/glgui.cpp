@@ -403,7 +403,7 @@ GLuint glgui::create_shader(const char *filename, GLenum type)
   GLuint res = glCreateShader(type);
   const GLchar *sources[] = {
     // Define GLSL version
-#define GL_ES_VERSION_2_0
+
 #ifdef GL_ES_VERSION_2_0
     "#version 100\n"
 #else
@@ -537,7 +537,7 @@ void glgui::update()
     {
       ++frame_counter;
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glPrintf(0, 0, basic_font, "frame=%i", frame_counter);
+      glPrintf(100, 100, basic_font, "frame=%i", frame_counter);
       swap_buffers();
       usleep(16000);
     }
