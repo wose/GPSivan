@@ -10,6 +10,7 @@
 #include <kazmath/kazmath.h>
 
 #include "glgui.h"
+#include "gps_com.h"
 
 glgui::glgui()
 {
