@@ -356,7 +356,7 @@ char* glgui::file_read(const char *filename)
   return res;
 }
 
-GLuint glgui::get_shader_location(int typem GLuint prog, const char *name)
+GLuint glgui::get_shader_location(int type, GLuint prog, const char *name)
 {
   GLuint ret;
   if (type == shaderAttrib)
@@ -484,7 +484,7 @@ bool glgui::init()
   //// associate the egl-context with the egl-surface
   eglMakeCurrent(_egl_display, _egl_surface, _egl_surface, _egl_context);
 
-  return true
+  return true;
 }
 
 void glgui::stop()
