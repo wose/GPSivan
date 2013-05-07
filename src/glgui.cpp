@@ -22,6 +22,29 @@ glgui::~glgui()
   eglTerminate(_egl_display);
 }
 
+void glgui::print_log(GLuint object)
+{
+  GLint log_length = 0;
+  if (glIsShader(object))
+    glGetShaderiv(object, GL_INFO_LOG_LENGTH, &log_length);
+  else if (glIsProgram(object))
+    glGetProgramiv(object, GL_INFO_LOG_LENGTH, &log_length);
+  else {
+    fprintf(stderr, "printlog: Not a shader or a program\n");
+    return;
+  }
+
+  char *log = (char *)malloc(log_length);
+
+  if (glIsShader(object))
+    glGetShaderInfoLog(object, log_length, NULL, log);
+  else if (glIsProgram(object))
+    glGetProgramInfoLog(object, log_length, NULL, log);
+
+  fprintf(stderr, "%s", log);
+  free(log);
+}
+
 void glgui::init_glprint(int width, int height)
 {
   kmMat4OrthographicProjection(&_glp.opm, 0, width, height, 0, -10, 10);
@@ -38,7 +61,7 @@ void glgui::init_glprint(int width, int height)
   glGetProgramiv(_glp.printProg, GL_LINK_STATUS, &link_ok);
   if (!link_ok) {
     printf("glLinkProgram:");
-    //  print_log(__glp.printProg);
+    print_log(__glp.printProg);
     printf("\n");
   }
 
@@ -412,7 +435,7 @@ GLuint glgui::create_shader(const char *filename, GLenum type)
   glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
   if (compile_ok == GL_FALSE) {
     fprintf(stderr, "%s:", filename);
-    //    print_log(res);
+    print_log(res);
     glDeleteShader(res);
     return 0;
   }

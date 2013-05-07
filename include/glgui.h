@@ -68,6 +68,8 @@ class glgui
   GLuint create_shader(const char *filename, GLenum type);
   GLuint get_shader_location(int type, GLuint prog, const char *name);
 
+  void print_log(GLuint object);
+
  public:
   int get_display_width() { return _display_width; }
   int get_display_height() { return _display_height; }
