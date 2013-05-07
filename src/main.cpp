@@ -11,7 +11,7 @@
 #define ONE_SECOND 1000000
 
 
-gps_com gps;
+//gps_com gps;
 glgui gui;
 
 void update_gps();

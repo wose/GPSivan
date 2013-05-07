@@ -4,6 +4,8 @@
 #include "gps_com.h"
 #include "libgpsmm.h"
 
+gps_com gps;
+
 gps_com::gps_com() :
   _gpsd_con("localhost", DEFAULT_GPSD_PORT)
 {

@@ -28,4 +28,6 @@ class gps_com
   void stop();
 };
 
+extern gps_com gps;
+
 #endif
