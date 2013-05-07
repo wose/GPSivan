@@ -61,7 +61,7 @@ void glgui::init_glprint(int width, int height)
   glGetProgramiv(_glp.printProg, GL_LINK_STATUS, &link_ok);
   if (!link_ok) {
     printf("glLinkProgram:");
-    print_log(__glp.printProg);
+    print_log(_glp.printProg);
     printf("\n");
   }
 
