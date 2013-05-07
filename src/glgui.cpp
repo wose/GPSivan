@@ -24,7 +24,7 @@ glgui::~glgui()
 
 void glgui::init_glprint(int width, int height)
 {
-  kmMat4OrthographicProjection(&_glp.opm, 0, w, h, 0, -10, 10);
+  kmMat4OrthographicProjection(&_glp.opm, 0, width, height, 0, -10, 10);
 
   GLuint vs, fs;
   vs = create_shader("resources/shaders/glprint.vert", GL_VERTEX_SHADER);
@@ -42,15 +42,15 @@ void glgui::init_glprint(int width, int height)
     printf("\n");
   }
 
-  _glp.cx_uniform = getShaderLocation(shaderUniform, _glp.printProg, "cx");
-  _glp.cy_uniform = getShaderLocation(shaderUniform, _glp.printProg, "cy");
+  _glp.cx_uniform = get_shader_location(shaderUniform, _glp.printProg, "cx");
+  _glp.cy_uniform = get_shader_location(shaderUniform, _glp.printProg, "cy");
   _glp.opm_uniform =
-    getShaderLocation(shaderUniform, _glp.printProg, "opm_uniform");
+    get_shader_location(shaderUniform, _glp.printProg, "opm_uniform");
   _glp.texture_uniform =
-    getShaderLocation(shaderUniform, _glp.printProg, "texture_uniform");
+    get_shader_location(shaderUniform, _glp.printProg, "texture_uniform");
 
-  _glp.vert_attrib = getShaderLocation(shaderAttrib, _glp.printProg, "vert_attrib");
-  _glp.uv_attrib = getShaderLocation(shaderAttrib, _glp.printProg, "uv_attrib");
+  _glp.vert_attrib = get_shader_location(shaderAttrib, _glp.printProg, "vert_attrib");
+  _glp.uv_attrib = get_shader_location(shaderAttrib, _glp.printProg, "uv_attrib");
 }
 
 void glgui::glPrintf(float x, float y, font_t &fnt, const char *fmt, ...)
@@ -170,18 +170,18 @@ font_t glgui::create_font(const char* tpath, unsigned int cbase, float txt_heigh
 {
   font_t t;
 
-  t.tex = loadPNG(tpath);
+  t.tex = loadpng(tpath);
   t.base=cbase;
   t.tHeight=txt_height;
   t.tLines=txt_lines;
   t.fWidth=fnt_width;
   t.fHeight=fnt_height;
 
-  float *vb=malloc(sizeof(float) * 3 * 6);
+  float *vb = (float*)malloc(sizeof(float) * 3 * 6);
     
   vb[0]=vb[1]=vb[2]=vb[5]=vb[7]=vb[8]=vb[11]=vb[12]=vb[14]=vb[15]=vb[17]=0;
-  vb[3]=vb[6]=vb[9]=fWidth;
-  vb[4]=vb[10]=vb[16]=fHeight;
+  vb[3]=vb[6]=vb[9]=fnt_width;
+  vb[4]=vb[10]=vb[16]=fnt_height;
 
   glGenBuffers(1, &t.vertBuf);
   glBindBuffer(GL_ARRAY_BUFFER, t.vertBuf);
@@ -189,7 +189,7 @@ font_t glgui::create_font(const char* tpath, unsigned int cbase, float txt_heigh
 
   free(vb);
 
-  float *tc=malloc(sizeof(float) * 2 * 6);
+  float *tc = (float*)malloc(sizeof(float) * 2 * 6);
   tc[0]=tc[1]=tc[5]=tc[8]=tc[9]=tc[10]=0;
   tc[2]=tc[4]=tc[6]=1./16;
   tc[3]=tc[7]=tc[11]=1./txt_lines;
@@ -356,6 +356,19 @@ char* glgui::file_read(const char *filename)
   return res;
 }
 
+GLuint glgui::get_shader_location(int typem GLuint prog, const char *name)
+{
+  GLuint ret;
+  if (type == shaderAttrib)
+    ret = glGetAttribLocation(prog, name);
+  if (type == shaderUniform)
+    ret = glGetUniformLocation(prog, name);
+  if (ret == -1) {
+    printf("Cound not bind shader location %s\n", name);
+  }
+  return ret;
+}
+
 GLuint glgui::create_shader(const char *filename, GLenum type)
 {
   const GLchar *source = file_read(filename);
@@ -418,7 +431,7 @@ void glgui::swap_buffers()
 
 bool glgui::init()
 {
-  makeNativeWindow(); // sets global pointers for win and disp
+  make_native_window();
 
   EGLint majorVersion;
   EGLint minorVersion;
@@ -459,10 +472,7 @@ bool glgui::init()
     return false;
   }
   //// egl-contexts collect all state descriptions needed required for operation
-  EGLint ctxattr[] = {
-    EGL_CONTEXT_CLIENT_VERSION, 2,
-    EGL_NONE
-  };
+  EGLint ctxattr[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE };
   _egl_context =
     eglCreateContext(_egl_display, ecfg, EGL_NO_CONTEXT, ctxattr);
   if (_egl_context == EGL_NO_CONTEXT) {
@@ -491,7 +501,7 @@ void glgui::update()
   font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
   init_glprint(_display_width, _display_height);
 
-  glCullFace(GL_BLACK);
+  glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
@@ -501,7 +511,7 @@ void glgui::update()
   while(_run)
     {
       ++frame_counter;
-      glClear(GL_COLOR_BUFFER_BIT | GLDEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glPrintf(0, 0, basic_font, "frame=%i", frame_counter);
       swap_buffers();
       usleep(16000);

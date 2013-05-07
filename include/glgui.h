@@ -66,6 +66,7 @@ class glgui
   void make_native_window();
   char *file_read(const char *filename);
   GLuint create_shader(const char *filename, GLenum type);
+  GLuint get_shader_location(int type, GLuint prog, const char *name);
 
  public:
   int get_display_width() { return _display_width; }
