@@ -20,8 +20,8 @@ void encoder::setup_encoder(int pin_a, int pin_b)
 {
   _pin_a = pin_a;
   _pin_b = pin_b;
-  value = 0;
-  lastEncoded = 0;
+  _value = 0;
+  _lastEncoded = 0;
 
   pinMode(pin_a, INPUT);
   pinMode(pin_b, INPUT);
