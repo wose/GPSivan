@@ -20,10 +20,14 @@ void encoder::setup_encoder(int pin_a, int pin_b)
 {
   _pin_a = pin_a;
   _pin_b = pin_b;
+  value = 0;
+  lastEncoded = 0;
+
   pinMode(pin_a, INPUT);
   pinMode(pin_b, INPUT);
   pullUpDnControl(pin_a, PUD_UP);
   pullUpDnControl(pin_b, PUD_UP);
+
   wiringPiISR(pin_a, INT_EDGE_BOTH, update_encoder);
   wiringPiISR(pin_b, INT_EDGE_BOTH, update_encoder);
 }
