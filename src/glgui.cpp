@@ -691,8 +691,8 @@ void glgui::update()
         {
           int x = long2tilex(lon, _zoom);
           int y = lat2tiley(lat, _zoom);
-          double x_trans = (long2tilexf(lon, _zoom) - x - 0.5) * 512;
-          double y_trans = (lat2tileyf(lat, _zoom) - y - 0.5) * 512;
+          double x_trans = (long2tilexf(lon, _zoom) - x + 0.5) * 512;
+          double y_trans = (lat2tileyf(lat, _zoom) - y + 0.5) * 512;
 
           if(x != _tilex or y != _tiley)
             {
