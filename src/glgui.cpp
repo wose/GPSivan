@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include <unistd.h>
 
+#include <math>
 #include <bcm_host.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
@@ -445,8 +446,98 @@ GLuint glgui::create_shader(const char *filename, GLenum type)
   return res;
 }
 
+void glgui::init_tile(int width, int height)
+{
+  const GLfloat quadVertices[] = {
+    -.5, -.5, 0,
+    .5, .5, 0,
+    .5, -.5, 0,
+
+    .5, .5, 0,
+    -.5, -.5, 0,
+    -.5, .5, 0
+  };
+
+  const GLfloat texCoord[] = {
+    0, 0,
+    1., 1,
+    1., 0,
+    1., 1.,
+    0, 0,
+    0, 1.
+  };
+
+  kmMat4OrthographicProjection(&_spr.opm, 0, width, height, 0, -10, 10);
+
+  GLuint vs, fs;
+  vs = create_shader("resources/shaders/sprite.vert", GL_VERTEX_SHADER);
+  fs = create_shader("resources/shaders/sprite.frag", GL_FRAGMENT_SHADER);
+
+  _spr.spriteProg = glCreateProgram();
+  glAttachShader(_spr.spriteProg, vs);
+  glAttachShader(_spr.spriteProg, fs);
+  glLinkProgram(_spr.spriteProg);
+  int link_ok;
+  glGetProgramiv(_spr.spriteProg, GL_LINK_STATUS, &link_ok);
+  if (!link_ok) {
+    printf("glLinkProgram:");
+    print_log(_spr.spriteProg);
+    printf("\n");
+  }
+
+  _spr.u_size = getShaderLocation(shaderUniform, _spr.spriteProg, "u_size");
+  _spr.opm_uniform =
+    getShaderLocation(shaderUniform, _spr.spriteProg, "opm_uniform");
+  _spr.texture_uniform =
+    getShaderLocation(shaderUniform, _spr.spriteProg, "texture_uniform");
+
+  _spr.vert_attrib = getShaderLocation(shaderAttrib, _spr.spriteProg, "vert_attrib");
+  _spr.uv_attrib = getShaderLocation(shaderAttrib, _spr.spriteProg, "uv_attrib");
+
+  glGenBuffers(1, &_spr.quadvbo);
+  glBindBuffer(GL_ARRAY_BUFFER, _spr.quadvbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * 6, quadVertices,
+               GL_STATIC_DRAW);
+
+  glGenBuffers(1, &_spr.texvbo);
+  glBindBuffer(GL_ARRAY_BUFFER, _spr.texvbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * 6, texCoord,
+               GL_STATIC_DRAW);
+}
+
 void glgui::draw_tile(float x, float y, float w, float h, float a, int tex)
 {
+  glUseProgram(_spr.spriteProg);
+  kmMat4Assign(&_spr.otm, &__spr.opm);
+  kmMat4Translation(&_spr.t, x, y, -1); // support z layers?
+  kmMat4RotationZ(&_spr.r,a);
+  kmMat4Multiply(&_spr.t,&__spr.t,&__spr.r);
+  kmMat4Multiply(&_spr.otm, &__spr.otm, &__spr.t);
+
+  glEnable(GL_BLEND);
+  glDisable(GL_DEPTH_TEST);
+
+  glBindTexture(GL_TEXTURE_2D, tex);
+
+  glEnableVertexAttribArray(_spr.vert_attrib);
+  glBindBuffer(GL_ARRAY_BUFFER, _spr.quadvbo);
+  glVertexAttribPointer(_spr.vert_attrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glEnableVertexAttribArray(_spr.uv_attrib);
+  glBindBuffer(GL_ARRAY_BUFFER, _spr.texvbo);
+  glVertexAttribPointer(_spr.uv_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glUniform1i(_spr.texture_uniform, 0);
+  glUniform2f(_spr.u_size, w,h);
+
+  glUniformMatrix4fv(_spr.opm_uniform, 1, GL_FALSE, (GLfloat *) & _spr.otm);
+
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glDisableVertexAttribArray(_glp.uv_attrib);
+  glDisableVertexAttribArray(_glp.vert_attrib);
 }
 
 void glgui::swap_buffers()
@@ -517,15 +608,43 @@ void glgui::stop()
   _run = false;
 }
 
+int glgui::long2tilex(double lon, int z)
+{
+  return (int)(floor((lon + 180.0) / 360.0 * pow(2.0, z)));
+}
+ 
+int glgui::lat2tiley(double lat, int z)
+{
+  return (int)(floor((1.0 - log( tan(lat * pi()/180.0) + 1.0 / 
+                                 cos(lat * pi()/180.0)) / pi()) / 
+                     2.0 * pow(2.0, z))); 
+}
+ 
+double glgui::tilex2long(int x, int z)
+{
+  return x / pow(2.0, z) * 360.0 - 180;
+}
+
+double glgui::tiley2lat(int y, int z)
+{
+  double n = pi() - 2.0 * pi() * y / pow(2.0, z);
+  return 180.0 / pi() * atan(0.5 * (exp(n) - exp(-n)));
+}
+
+
 void glgui::update()
 {
   init();
   unsigned long frame_counter = 0;
   glActiveTexture(GL_TEXTURE0);
 
+  GLuint empty_tex = loadpng("resources/textures/empty.png");
+  _tile_tex = empty_tex;
+
   glViewport(0, 0, _display_width, _display_height);
   init_glprint(_display_width, _display_height);
   font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
+  init_tile(_display_width, _display_height);
 
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
@@ -543,6 +662,14 @@ void glgui::update()
 
       if(gps.get_latlonvelalt(lat, lon, vel, alt))
         {
+          int x = long2tilex(lon, _zoom);
+          int y = lat2tiley(lat, _zoom);
+          if(x != _tilex or y != _tiley)
+            {
+              // load new texture and release old one
+            }
+
+          draw_tile(0, 0, 256, 256, 0, _tile_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
         }
