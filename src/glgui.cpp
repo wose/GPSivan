@@ -541,7 +541,7 @@ void glgui::update()
       ++frame_counter;
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      if(gps.get_latlon(lat, lon, vel, alt))
+      if(gps.get_latlonvelalt(lat, lon, vel, alt))
         {
           glPrintf(32, 16, basic_font, "%f %f %f.2 %f.2", lat, lon, vel, alt);
         }
