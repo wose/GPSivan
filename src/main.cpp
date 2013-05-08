@@ -28,7 +28,7 @@ int main(void)
   while(getchar() != 'q')
     {
       double lat, lon, vel, alt;
-      if(gps.get_latlon(lat, lon, vel, alt))
+      if(gps.get_latlonvelalt(lat, lon, vel, alt))
         std::cout << "Lat: " << lat << " Lon: " << lon 
                   << " Vel: " << vel <<std::endl;
     }
