@@ -1,6 +1,8 @@
 #ifndef _ENCODER_H_
 #define _ENCODER_H_
 
+void update_encoder();
+
 class encoder
 {
  public:
@@ -15,7 +17,8 @@ class encoder
 
  private:
   void setup_encoder(int pin_a, int pin_b);
-  void update_encoder();
 };
+
+extern encoder enc;
 
 #endif
