@@ -13,7 +13,7 @@
 
 
 //gps_com gps;
-glgui gui;
+//glgui gui;
 
 void update_gps();
 void update_gui();

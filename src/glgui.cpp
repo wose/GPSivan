@@ -13,6 +13,8 @@
 #include "glgui.h"
 #include "gps_com.h"
 
+glgui gui;
+
 glgui::glgui()
 {
 }

@@ -109,4 +109,6 @@ class glgui
   void stop();
 };
 
+extern glgui gui;
+
 #endif

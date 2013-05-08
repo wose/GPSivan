@@ -37,13 +37,13 @@ void update_encoder()
 
   if(sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
     {
-      //      gui.zoom_in();
-      //_value++;
+      gui.zoom_in();
+      enc._value++;
     }
   if(sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000)
     {
-      // gui.zoom_out();
-      //_value--;
+      gui.zoom_out();
+      enc._value--;
     }
 
   enc._lastEncoded = encoded;
