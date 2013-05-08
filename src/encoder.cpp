@@ -29,8 +29,8 @@ void encoder::setup_encoder(int pin_a, int pin_b)
 
 void update_encoder()
 {
-  int MSB = digitalRead(_pin_a);
-  int LSB = digitalRead(_pin_b);
+  //  int MSB = digitalRead(_pin_a);
+  //  int LSB = digitalRead(_pin_b);
   /*
   int encoded = (MSB << 1) | LSB;
   int sum = (_lastEncoded << 2) | encoded;
