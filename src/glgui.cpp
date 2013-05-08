@@ -663,7 +663,6 @@ void glgui::update()
 
   _fontbg_tex = loadpng("resources/textures/fontbg.png");
   GLuint empty_tex = loadpng("resources/textures/empty.png");
-  _tile_tex = empty_tex;
 
   for(int col = 0; col < 3; ++col)
     for(int row = 0; row < 3; ++row)
