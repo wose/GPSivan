@@ -730,7 +730,7 @@ void glgui::update()
           //        _tile_tex);
           draw_tile(center_x, center_y, 32, 32, 0, _marker_tex);
 
-          draw_tile(_display_width / 2, 24, _display_width, 48, 0, _fontbg_tex);
+          draw_tile(_display_width / 2, 32, _display_width, 64, 0, _fontbg_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
