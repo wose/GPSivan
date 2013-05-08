@@ -663,6 +663,11 @@ void glgui::update()
 
   GLuint empty_tex = loadpng("resources/textures/empty.png");
   _tile_tex = empty_tex;
+
+  for(int col = 0; col < 3; ++col)
+    for(int row = 0; row < 3; ++row)
+      _tiles[col][row] = empty_tex;
+
   _marker_tex = loadpng("resources/textures/marker.png");
 
   glViewport(0, 0, _display_width, _display_height);
@@ -691,21 +696,38 @@ void glgui::update()
         {
           int x = long2tilex(lon, _zoom);
           int y = lat2tiley(lat, _zoom);
-          double x_trans = (long2tilexf(lon, _zoom) - x - 0.5) * 256;
-          double y_trans = (lat2tileyf(lat, _zoom) - y - 0.5) * 256;
+          double x_trans = (long2tilexf(lon, _zoom) - x - 0.5) * 512;
+          double y_trans = (lat2tileyf(lat, _zoom) - y - 0.5) * 512;
 
           if(x != _tilex or y != _tiley)
             {
               char buffer [255];
-              sprintf(buffer, "tiles/%d/%d/%d.png", _zoom, x, y);
+              for(int col = 0; col < 3; ++col)
+                  for(int row = 0; row < 3; ++row)
+                    {
+                      sprintf(buffer, "tiles/%d/%d/%d.png", _zoom, 
+                              x + col - 1, y + row - 1);
+                      glDeleteTextures(1, &_tiles[col][row]);
+                      _tiles[col][row] = loadpng(buffer);
+                    }
 
-              GLuint tmp_tex = loadpng(buffer);
-              glDeleteTextures(1, &_tile_tex);
-              _tile_tex = tmp_tex;
+              //              char buffer [255];
+              //              sprintf(buffer, "tiles/%d/%d/%d.png", _zoom, x, y);
+
+              //              GLuint tmp_tex = loadpng(buffer);
+              //              glDeleteTextures(1, &_tile_tex);
+              //              _tile_tex = tmp_tex;
             }
 
-          draw_tile(center_x + x_trans, center_y + y_trans, 512, 512, 0,
-                    _tile_tex);
+          for(int col = 0; col < 3; ++col)
+            for(int row = 0; row < 3; ++row)
+              {
+                draw_tile(center_x - x_trans + (col - 1) * 512,
+                          center_y - y_trans + (row - 1) * 512,
+                          512, 512, 0, _tiles[col][row]);
+              }
+          //          draw_tile(center_x - x_trans, center_y - y_trans, 512, 512, 0,
+          //        _tile_tex);
           draw_tile(center_x, center_y, 32, 32, 0.3, _marker_tex);
 
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",

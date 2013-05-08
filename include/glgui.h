@@ -49,6 +49,16 @@ class glgui
   unsigned int _tilex;
   unsigned int _tiley;
   GLuint _tile_tex;
+
+  GLuint _tl_tex;
+  GLuint _tm_tex;
+  GLuint _tr_tex;
+  GLuint _ml_tex;
+  GLuint _mm_tex;
+  GLuint _mr_tex;
+  GLuint _bl_tex;
+  GLuint _bm_tex;
+  GLuint _br_tex;
   GLuint _marker_tex;
 
   enum shaderLocationType {
