@@ -6,6 +6,7 @@
 #include "gps_com.h"
 #include "glgui.h"
 
+
 #define WAITING_TIME 5000000
 #define RETRY_TIME 5
 #define ONE_SECOND 1000000
