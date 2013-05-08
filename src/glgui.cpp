@@ -3,7 +3,7 @@
 #include <cstdarg>
 #include <unistd.h>
 
-#include <math>
+#include <math.h>
 #include <bcm_host.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>

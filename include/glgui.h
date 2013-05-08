@@ -9,7 +9,7 @@
 #include <GLES2/gl2.h>
 #include <kazmath/kazmath.h>
 
-#include <math>
+#include <math.h>
 #include <atomic>
 
 typedef struct {
