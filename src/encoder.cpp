@@ -8,7 +8,9 @@
 
 encoder enc(17, 18);
 
-encoder::encoder(int pin_a, int pin_b)
+encoder::encoder(int pin_a, int pin_b) :
+  _pin_a(pin_a),
+  _pin_b(pin_b)
 {
   setup_encoder(pin_a, pin_b);
 }
