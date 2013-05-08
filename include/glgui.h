@@ -12,6 +12,8 @@
 #include <math.h>
 #include <atomic>
 
+constexpr double pi() { return atan(1)*4; }
+
 typedef struct {
   unsigned int tex;
     unsigned int base;
@@ -84,8 +86,6 @@ class glgui
   GLuint get_shader_location(int type, GLuint prog, const char *name);
 
   void print_log(GLuint object);
-
-  constexpr double pi() { return atan(1)*4; }
 
   int long2tilex(double lon, int z);
   int lat2tiley(double lat, int z);

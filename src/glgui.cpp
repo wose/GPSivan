@@ -485,14 +485,14 @@ void glgui::init_tile(int width, int height)
     printf("\n");
   }
 
-  _spr.u_size = getShaderLocation(shaderUniform, _spr.spriteProg, "u_size");
+  _spr.u_size = get_shader_location(shaderUniform, _spr.spriteProg, "u_size");
   _spr.opm_uniform =
-    getShaderLocation(shaderUniform, _spr.spriteProg, "opm_uniform");
+    get_shader_location(shaderUniform, _spr.spriteProg, "opm_uniform");
   _spr.texture_uniform =
-    getShaderLocation(shaderUniform, _spr.spriteProg, "texture_uniform");
+    get_shader_location(shaderUniform, _spr.spriteProg, "texture_uniform");
 
-  _spr.vert_attrib = getShaderLocation(shaderAttrib, _spr.spriteProg, "vert_attrib");
-  _spr.uv_attrib = getShaderLocation(shaderAttrib, _spr.spriteProg, "uv_attrib");
+  _spr.vert_attrib = get_shader_location(shaderAttrib, _spr.spriteProg, "vert_attrib");
+  _spr.uv_attrib = get_shader_location(shaderAttrib, _spr.spriteProg, "uv_attrib");
 
   glGenBuffers(1, &_spr.quadvbo);
   glBindBuffer(GL_ARRAY_BUFFER, _spr.quadvbo);
@@ -508,11 +508,11 @@ void glgui::init_tile(int width, int height)
 void glgui::draw_tile(float x, float y, float w, float h, float a, int tex)
 {
   glUseProgram(_spr.spriteProg);
-  kmMat4Assign(&_spr.otm, &__spr.opm);
+  kmMat4Assign(&_spr.otm, &_spr.opm);
   kmMat4Translation(&_spr.t, x, y, -1); // support z layers?
   kmMat4RotationZ(&_spr.r,a);
-  kmMat4Multiply(&_spr.t,&__spr.t,&__spr.r);
-  kmMat4Multiply(&_spr.otm, &__spr.otm, &__spr.t);
+  kmMat4Multiply(&_spr.t,&_spr.t,&_spr.r);
+  kmMat4Multiply(&_spr.otm, &_spr.otm, &_spr.t);
 
   glEnable(GL_BLEND);
   glDisable(GL_DEPTH_TEST);
