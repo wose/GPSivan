@@ -619,6 +619,18 @@ int glgui::lat2tiley(double lat, int z)
                                  cos(lat * pi()/180.0)) / pi()) / 
                      2.0 * pow(2.0, z))); 
 }
+
+double glgui::long2tilexf(double lon, int z)
+{
+  return (lon + 180.0) / 360.0 * pow(2.0, z);
+}
+
+double glgui::lat2tileyf(double lat, int z)
+{
+  return (1.0 - log( tan(lat * pi() / 180.0) + 1.0 /
+                     cos(lat * pi() / 180.0)) / pi()) /
+    2.0 * pow(2.0, z);
+}
  
 double glgui::tilex2long(int x, int z)
 {
@@ -666,6 +678,9 @@ void glgui::update()
   glClearColor(0.2, 0.2, 0.2, 1);
 
   double lat, lon, vel, alt;
+  double center_x = _display_width / 2;
+  double center_y = _display_height / 2;
+
   while(_run)
     {
       usleep(16000);
@@ -676,6 +691,9 @@ void glgui::update()
         {
           int x = long2tilex(lon, _zoom);
           int y = lat2tiley(lat, _zoom);
+          double x_trans = (long2tilexf(lon, _zoom) - x - 0.5) * center_x;
+          double y_trans = (lat2tileyf(lat, _zoom) - y - 0.5) * center_y;
+
           if(x != _tilex or y != _tiley)
             {
               char buffer [255];
@@ -686,8 +704,10 @@ void glgui::update()
               _tile_tex = tmp_tex;
             }
 
-          draw_tile(_display_width/2, _display_height/2, 512, 512, 0, _tile_tex);
-          draw_tile(_display_width/2, _display_height/2, 32, 32, 0.3, _marker_tex);
+          draw_tile(center_x + x_trans, center_y + y_trans, 512, 512, 0,
+                    _tile_tex);
+          draw_tile(center_x, center_y, 32, 32, 0.3, _marker_tex);
+
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
