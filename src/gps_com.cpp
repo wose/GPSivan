@@ -51,14 +51,17 @@ void gps_com::stop()
   _run = false;
 }
 
-bool gps_com::get_latlon(double &lat, double &lon)
+bool gps_com::get_latlonvelalt(double &lat, double &lon, double &vel, double &alt)
 {
   std::lock_guard<std::mutex> lock(_gps_data_mutex);
   if (_last_data.fix.mode >= MODE_2D)
     {
-      lat= _last_data.fix.latitude;
-      lon= _last_data.fix.longitude;
+      lat = _last_data.fix.latitude;
+      lon = _last_data.fix.longitude;
+      vel = _last_data.fix.speed;
+      alt = _last_data.fix.altitude;
       return true;
     }
   return false;
 }
+

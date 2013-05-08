@@ -534,16 +534,16 @@ void glgui::update()
   glDisable(GL_DEPTH_TEST);
   glClearColor(0.2, 0.2, 0.2, 1);
 
-  double lat, lon;
+  double lat, lon, vel, alt;
   while(_run)
     {
       usleep(16000);
       ++frame_counter;
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      if(gps.get_latlon(lat, lon))
+      if(gps.get_latlon(lat, lon, vel, alt))
         {
-          glPrintf(32, 16, basic_font, "%f %f", lat, lon);
+          glPrintf(32, 16, basic_font, "%f %f %f.2 %f.2", lat, lon, vel, alt);
         }
       else
         {

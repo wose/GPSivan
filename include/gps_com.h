@@ -24,7 +24,7 @@ class gps_com
   
  public:
   void update();
-  bool get_latlon(double &lat, double &lon);
+  bool get_latlonvelalt(double &lat, double &lon, double &vel, double &alt);
   void stop();
 };
 
