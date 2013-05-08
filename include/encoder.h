@@ -15,7 +15,7 @@ class encoder
   volatile long _value;
   volatile int _lastEncoded;
 
- private:
+ public:
   void setup_encoder(int pin_a, int pin_b);
 };
 
