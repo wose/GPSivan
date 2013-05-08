@@ -48,8 +48,8 @@ class glgui
   unsigned int _zoom = 16;
   unsigned int _tilex;
   unsigned int _tiley;
-  GLuint _tile_tex;
 
+  GLuint _fontbg_tex;
   GLuint _tiles[3][3];
   GLuint _marker_tex;
 

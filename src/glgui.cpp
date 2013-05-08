@@ -661,6 +661,7 @@ void glgui::update()
   unsigned long frame_counter = 0;
   glActiveTexture(GL_TEXTURE0);
 
+  _fontbg_tex = loadpng("resources/textures/fontbg.png");
   GLuint empty_tex = loadpng("resources/textures/empty.png");
   _tile_tex = empty_tex;
 
@@ -730,6 +731,7 @@ void glgui::update()
           //        _tile_tex);
           draw_tile(center_x, center_y, 32, 32, 0.3, _marker_tex);
 
+          draw_tile(_display_width / 2, 24, _display_width, 48, 0.5, _fontbg_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
