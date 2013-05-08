@@ -45,7 +45,7 @@ void update_encoder()
       // gui.zoom_out();
       //_value--;
     }
-  */
+
   enc._lastEncoded = encoded;
 }
 
