@@ -640,6 +640,7 @@ void glgui::update()
 
   GLuint empty_tex = loadpng("resources/textures/empty.png");
   _tile_tex = empty_tex;
+  _marker_tex = loadpng("resources/textures/marker.png");
 
   glViewport(0, 0, _display_width, _display_height);
   init_glprint(_display_width, _display_height);
@@ -670,8 +671,10 @@ void glgui::update()
             }
 
           draw_tile(_display_width/2, _display_height/2, 256, 256, 0, _tile_tex);
+          draw_tile(_display_width/2, _display_height/2, 48, 48, 0, _marker_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
+          glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
         }
       else
         {
