@@ -667,11 +667,16 @@ void glgui::update()
           int y = lat2tiley(lat, _zoom);
           if(x != _tilex or y != _tiley)
             {
-              // load new texture and release old one
+              char buffer [255];
+              sprintf(buffer, "tiles/%d/%d/%d.png", _zoom, x, y);
+
+              GLuint tmp_tex = loadpng(buffer);
+              glDeleteTextures(1, &_tile_tex);
+              _tile_tex = tmp_tex;
             }
 
           draw_tile(_display_width/2, _display_height/2, 256, 256, 0, _tile_tex);
-          draw_tile(_display_width/2, _display_height/2, 48, 48, 0, _marker_tex);
+          draw_tile(_display_width/2, _display_height/2, 32, 32, 0.3, _marker_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
