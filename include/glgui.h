@@ -99,6 +99,8 @@ class glgui
   int get_display_width() { return _display_width; }
   int get_display_height() { return _display_height; }
   bool init();
+  void zoom_in();
+  void zoom_out();
   void update();
   void stop();
 };

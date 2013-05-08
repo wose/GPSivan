@@ -631,6 +631,17 @@ double glgui::tiley2lat(int y, int z)
   return 180.0 / pi() * atan(0.5 * (exp(n) - exp(-n)));
 }
 
+void glgui::zoom_in()
+{
+  if(_zoom < 18)
+    ++_zoom;
+}
+
+void glgui::zoom_out()
+{
+  if(_zoom > 3)
+    --_zoom;
+}
 
 void glgui::update()
 {
@@ -675,11 +686,12 @@ void glgui::update()
               _tile_tex = tmp_tex;
             }
 
-          draw_tile(_display_width/2, _display_height/2, 256, 256, 0, _tile_tex);
+          draw_tile(_display_width/2, _display_height/2, 512, 512, 0, _tile_tex);
           draw_tile(_display_width/2, _display_height/2, 32, 32, 0.3, _marker_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
+          glPrintf(32, 48, basic_font, "%ix%i", _display_width, _display_height);
         }
       else
         {
