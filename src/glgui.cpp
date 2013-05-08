@@ -543,7 +543,7 @@ void glgui::update()
 
       if(gps.get_latlonvelalt(lat, lon, vel, alt))
         {
-          glPrintf(32, 16, basic_font, "%f N  %f E  %.2f km/h  %.2f m",
+          glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
         }
       else
