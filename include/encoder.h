@@ -9,7 +9,7 @@ class encoder
   encoder(int pin_a, int pin_b);
   ~encoder();
 
- private:
+ public:
   int _pin_a;
   int _pin_b;
   volatile long _value;

@@ -29,11 +29,11 @@ void encoder::setup_encoder(int pin_a, int pin_b)
 
 void update_encoder()
 {
-  //  int MSB = digitalRead(_pin_a);
-  //  int LSB = digitalRead(_pin_b);
-  /*
+  int MSB = digitalRead(enc._pin_a);
+  int LSB = digitalRead(enc._pin_b);
+  
   int encoded = (MSB << 1) | LSB;
-  int sum = (_lastEncoded << 2) | encoded;
+  int sum = (enc._lastEncoded << 2) | encoded;
 
   if(sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
     {
@@ -46,6 +46,6 @@ void update_encoder()
       //_value--;
     }
   */
-  //_lastEncoded = encoded;
+  enc._lastEncoded = encoded;
 }
 
