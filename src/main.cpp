@@ -25,14 +25,21 @@ int main(void)
   std::thread gps_thread(update_gps);
   std::thread gui_thread(update_gui);
 
-  while(getchar() != 'q')
-    {
-      double lat, lon, vel, alt;
-      if(gps.get_latlonvelalt(lat, lon, vel, alt))
-        std::cout << "Lat: " << lat << " Lon: " << lon 
-                  << " Vel: " << vel <<std::endl;
-    }
-  
+  char c;
+
+  do {
+    c = getchar();
+    switch(c)
+      {
+      case 'i':
+        gui.zoom_in();
+        break;
+      case 'o':
+        gui.zoom_out();
+        break;
+      }
+  } while (c != 'q');
+
   gps.stop();
   gui.stop();
 
