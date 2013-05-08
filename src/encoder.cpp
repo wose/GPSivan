@@ -1,7 +1,7 @@
 #include <wiringPi.h>
 
 #include <stdio.h>
-#include <cstdlib.h>
+#include <stdlib.h>
 
 #include "encoder.h"
 #include "glgui.h"
