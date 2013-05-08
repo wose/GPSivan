@@ -19,8 +19,8 @@ void encoder::setup_encoder(int pin_a, int pin_b)
 {
   pinMode(pin_a, INPUT);
   pinMode(pin_b, INPUT);
-  pullUpDnControl(pin_a, RUD_UP);
-  pullUODnControl(pin_b, RUD_UP);
+  pullUpDnControl(pin_a, PUD_UP);
+  pullUpDnControl(pin_b, PUD_UP);
   wiringPiISR(pin_a, INT_EDGE_BOTH, update_encoder);
   wiringPiISR(pin_b, INT_EDGE_BOTH, update_encoder);
 }
@@ -30,8 +30,8 @@ void encoder::update_encoder()
   int MSB = digitalRead(_pin_a);
   int LSB = digitalRead(_pin_b);
 
-  int encoded = (MSB << 1) ! LSB;
-  int sum = (_lastEncoded << 2) ! encoded;
+  int encoded = (MSB << 1) | LSB;
+  int sum = (_lastEncoded << 2) | encoded;
 
   if(sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011)
     {

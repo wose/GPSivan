@@ -19,6 +19,7 @@ include_directories(${ONG_INCLUDE_DIR})
 include_directories(${EGL_INCLUDE_DIR})
 include_directories(${OPENGLES2_INCLUDE_DIR})
 include_directories(${KAZMATH_INCLUDE_DIR})
+include_directories(/usr/local/include)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -26,6 +27,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 link_directories(${LINK_DIRECTORIES} /opt/vc/lib)
+link_directories(/usr/local/lib)
 
 add_subdirectory(src)
 
