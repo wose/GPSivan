@@ -543,11 +543,11 @@ void glgui::update()
 
       if(gps.get_latlon(lat, lon))
         {
-          glPrintf(16, 16, basic_font, "%f %f", lat, lon);
+          glPrintf(32, 16, basic_font, "%f %f", lat, lon);
         }
       else
         {
-          glPrintf(16, 16, basic_font, "No Fix");
+          glPrintf(32, 16, basic_font, "No Fix");
         }
       
       swap_buffers();
