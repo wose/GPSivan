@@ -1,6 +1,6 @@
 #include <wiringPi.h>
 
-#include <cstdio.h>
+#include <stdio.h>
 #include <cstdlib.h>
 
 #include "encoder.h"
