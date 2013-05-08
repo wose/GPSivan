@@ -6,13 +6,10 @@
 #include "encoder.h"
 #include "glgui.h"
 
-encoder enc(17, 18);
+encoder enc;
 
-encoder::encoder(int pin_a, int pin_b) :
-  _pin_a(pin_a),
-  _pin_b(pin_b)
+encoder::encoder()
 {
-  setup_encoder(pin_a, pin_b);
 }
 
 encoder::~encoder()
@@ -21,6 +18,8 @@ encoder::~encoder()
 
 void encoder::setup_encoder(int pin_a, int pin_b)
 {
+  _pin_a = pin_a;
+  _pin_b = pin_b;
   pinMode(pin_a, INPUT);
   pinMode(pin_b, INPUT);
   pullUpDnControl(pin_a, PUD_UP);

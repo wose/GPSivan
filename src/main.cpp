@@ -5,6 +5,7 @@
 
 #include "gps_com.h"
 #include "glgui.h"
+#include "encoder.h"
 
 
 #define WAITING_TIME 5000000
@@ -25,6 +26,8 @@ int main(void)
 
   std::thread gps_thread(update_gps);
   std::thread gui_thread(update_gui);
+
+  enc.setup_encoder(17, 18);
 
   char c;
 

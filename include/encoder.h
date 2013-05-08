@@ -6,7 +6,7 @@ void update_encoder();
 class encoder
 {
  public:
-  encoder(int pin_a, int pin_b);
+  encoder();
   ~encoder();
 
  public:
