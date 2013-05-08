@@ -669,7 +669,7 @@ void glgui::update()
               // load new texture and release old one
             }
 
-          draw_tile(0, 0, 256, 256, 0, _tile_tex);
+          draw_tile(_display_width/2, _display_height/2, 256, 256, 0, _tile_tex);
           glPrintf(32, 16, basic_font, "%fN %fE %.1fkm/h %.1fm",
                    lat, lon, vel, alt);
         }
