@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "encoder.h"
 #include "glgui.h"
@@ -22,6 +23,8 @@ void encoder::setup_encoder(int pin_a, int pin_b)
   _pin_b = pin_b;
   _value = 0;
   _lastEncoded = 0;
+
+  wiringPiSetup();
 
   pinMode(pin_a, INPUT);
   pinMode(pin_b, INPUT);

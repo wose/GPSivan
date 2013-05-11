@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <thread>
 
+#include "wiringPi.h"
 #include "gps_com.h"
 #include "glgui.h"
 #include "encoder.h"
@@ -27,7 +28,7 @@ int main(void)
   std::thread gps_thread(update_gps);
   std::thread gui_thread(update_gui);
 
-  enc.setup_encoder(17, 18);
+  enc.setup_encoder(1, 2);
 
   char c;
 
