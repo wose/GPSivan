@@ -1,0 +1,25 @@
+* GPSivan
+
+GPSivan communicates over gpsd with a gps receiver and displays the
+current position on prerendered map tiles from openstreetmap. At this
+moment it only runs on a raspberry pi and uses OpenGL ES 2 to display
+the map and some other infos. To zoom the map you'll have to
+connect a rotary encoder to the GPIO pins of the rpi.
+
+** Screenshots
+
+#+ATTR_HTML: width="300px"
+[[./resources/images/screenshot-1.png]]
+
+** Dependencies
+   - gpsd
+   - opengles2
+   - kazmath
+   - egl
+   - libpng
+   - wiringPi
+   - cmake
+   - C++11 compatible compiler
+
+** Hacking it
+TODO
