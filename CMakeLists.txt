@@ -15,7 +15,7 @@ include_directories(
         /opt/vc/include/interface/vcos/pthreads
        /opt/vc/include/interface/vmcs_host/linux)
 include_directories(${GPSD_INCLUDE_DIR})
-include_directories(${ONG_INCLUDE_DIR})
+include_directories(${PNG_INCLUDE_DIR})
 include_directories(${EGL_INCLUDE_DIR})
 include_directories(${OPENGLES2_INCLUDE_DIR})
 include_directories(${KAZMATH_INCLUDE_DIR})
