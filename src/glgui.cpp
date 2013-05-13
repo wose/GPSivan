@@ -676,7 +676,7 @@ void glgui::update()
 
   glViewport(0, 0, _display_width, _display_height);
   init_glprint(_display_width, _display_height);
-  font_t basic_font = create_font("resources/textures/font.png", 0, 256, 16, 16, 16);
+  font_t basic_font = create_font("resources/textures/sdffont.png", 0, 256, 16, 16, 16);
   init_tile(_display_width, _display_height);
 
   glCullFace(GL_BACK);
