@@ -61,7 +61,7 @@ class glgui
   struct {
     kmMat4 opm, otm, t;
     GLuint printProg, opm_uniform;
-    GLuint fonttex, texture_uniform, cx_uniform, cy_uniform;
+    GLuint fonttex, texture_uniform, cx_uniform, cy_uniform, color_uniform;
     GLuint vert_attrib, uv_attrib;
     GLuint quadvbo, texvbo;
   } _glp;

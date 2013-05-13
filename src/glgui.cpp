@@ -54,8 +54,8 @@ void glgui::init_glprint(int width, int height)
   kmMat4OrthographicProjection(&_glp.opm, 0, width, height, 0, -10, 10);
 
   GLuint vs, fs;
-  vs = create_shader("resources/shaders/glprint.vert", GL_VERTEX_SHADER);
-  fs = create_shader("resources/shaders/glprint.frag", GL_FRAGMENT_SHADER);
+  vs = create_shader("resources/shaders/glprint_sdf.vert", GL_VERTEX_SHADER);
+  fs = create_shader("resources/shaders/glprint_sdf.frag", GL_FRAGMENT_SHADER);
 
   _glp.printProg = glCreateProgram();
   glAttachShader(_glp.printProg, vs);
@@ -71,6 +71,7 @@ void glgui::init_glprint(int width, int height)
 
   _glp.cx_uniform = get_shader_location(shaderUniform, _glp.printProg, "cx");
   _glp.cy_uniform = get_shader_location(shaderUniform, _glp.printProg, "cy");
+  _glp.color_uniform = get_shader_location(shaderUniform, _glp.printProg, "text_color");
   _glp.opm_uniform =
     get_shader_location(shaderUniform, _glp.printProg, "opm_uniform");
   _glp.texture_uniform =
@@ -110,6 +111,7 @@ void glgui::glPrintf(float x, float y, font_t &fnt, const char *fmt, ...)
   glVertexAttribPointer(_glp.uv_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   glUniform1i(_glp.texture_uniform, 0);
+  glUniform3f(_glp.color_uniform, 1.0, 0.0, 0.0);
 
   for (int n = 0; n < strlen(text); n++) {
     int c = (int)text[n] - fnt.base;
