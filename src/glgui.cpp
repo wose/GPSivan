@@ -111,7 +111,7 @@ void glgui::glPrintf(float x, float y, font_t &fnt, const char *fmt, ...)
   glVertexAttribPointer(_glp.uv_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
   glUniform1i(_glp.texture_uniform, 0);
-  glUniform3f(_glp.color_uniform, 1.0, 0.0, 0.0);
+  glUniform3f(_glp.color_uniform, 1.0, 1.0, 1.0);
 
   for (int n = 0; n < strlen(text); n++) {
     int c = (int)text[n] - fnt.base;
@@ -676,7 +676,8 @@ void glgui::update()
 
   glViewport(0, 0, _display_width, _display_height);
   init_glprint(_display_width, _display_height);
-  font_t basic_font = create_font("resources/textures/sdffont.png", 0, 256, 16, 16, 16);
+  font_t basic_font = create_font("resources/textures/sdffont.png", 0, 512, 16, 16, 16);
+  font_t hud_font = create_font("resources/textures/sdffont.png", 0, 512, 16, 32, 32);
   init_tile(_display_width, _display_height);
 
   glCullFace(GL_BACK);
@@ -739,6 +740,7 @@ void glgui::update()
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
           glPrintf(32, 48, basic_font, "%ix%i", _display_width, _display_height);
+          glPrintf(32, 450, hud_font, "%ix", _zoom);
         }
       else
         {
