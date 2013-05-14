@@ -740,7 +740,7 @@ void glgui::update()
                    lat, lon, vel, alt);
           glPrintf(32, 32, basic_font, "X:%i Y:%i", x, y);
           glPrintf(32, 48, basic_font, "%ix%i", _display_width, _display_height);
-          glPrintf(32, 450, hud_font, "%ix", _zoom);
+          glPrintf(32, 430, hud_font, "%ix", _zoom);
         }
       else
         {
